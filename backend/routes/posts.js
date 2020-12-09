@@ -33,16 +33,11 @@ router.post('/', authorize,  (request, response) => {
         media: {required: false},
     };
 
-    const fieldMissing = {
-        code: null,
-        message: 'Please provide %s field'
-    };
+    let urlType = checkURL(media.url)
 
     for (let field in form) {
         if (!media.type) {
             if (media.url) {
-                fieldMissing.code = field;
-                fieldMissing.message = fieldMissing.message.replace('%s', field);
                 return;
             } else {
                 if (!text) {
@@ -50,11 +45,9 @@ router.post('/', authorize,  (request, response) => {
                 }
             }
         } else {
-            if (!media.url) {
-                fieldMissing.code = field;
-                fieldMissing.message = fieldMissing.message.replace('%s', field);
+            if (!urlType) {
                 return;
-            }
+            } else if (media.type !== urlType) return;
         }
     }
 
@@ -93,5 +86,17 @@ router.delete('/:postId/likes', authorize, (request, response) => {
         response.status(200).json()
     })
 });
+
+function checkURL(url) {
+    if (!url) {
+        return null
+    } else if (url.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+        return "image";
+    } else if (url.match(/\.(mov|mp4|avi|webm|mpeg-4|wmv|flv|mkv)$/) != null) {
+        return "video"
+    } else {
+        return null
+    }
+}
 
 module.exports = router;
