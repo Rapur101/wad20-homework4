@@ -25,6 +25,13 @@ router.get('/', authorize, (request, response) => {
 router.post('/', authorize, (request, response) => {
 
     // Endpoint to create a new post
+
+    //If request is empty
+    if (!request.body || !request.body.text) {
+        response.status(403).json();
+        return;
+    }
+
     let text = request.body.text;
     let media = request.body.media;
 
@@ -62,8 +69,11 @@ router.put('/:postId/likes', authorize, (request, response) => {
     // Endpoint for current user to like a post
     let userId = request.currentUser.id;
     let postId = request.params.postId;
-    console.log(userId)
-    console.log(postId)
+
+    if (!userId || !postId) {
+        response.status(403).json();
+        return;
+    }
 
     PostModel.like(userId, postId, () => {
         response.status(200).json()
@@ -74,8 +84,12 @@ router.delete('/:postId/likes', authorize, (request, response) => {
     // Endpoint for current user to unlike a post
     let userId = request.currentUser.id;
     let postId = request.params.postId;
-    console.log(userId)
-    console.log(postId)
+
+    if (!userId || !postId) {
+        response.status(403).json();
+        return;
+    }
+
     PostModel.unlike(userId, postId, () => {
         response.status(200).json()
     })
