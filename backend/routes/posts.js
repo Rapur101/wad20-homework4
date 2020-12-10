@@ -22,34 +22,28 @@ router.get('/', authorize, (request, response) => {
 
 });
 
-router.post('/', authorize,  (request, response) => {
+router.post('/', authorize, (request, response) => {
 
     // Endpoint to create a new post
     let text = request.body.text;
     let media = request.body.media;
 
-    let form = {
-        text: {required: false},
-        media: {required: false},
-    };
-
     let urlType = checkURL(media.url)
 
-    for (let field in form) {
-        if (!media.type) {
-            if (media.url) {
-                return;
-            } else {
-                if (!text) {
-                    return;
-                }
-            }
+    if (!media.type) {
+        if (media.url) {
+            return;
         } else {
-            if (!urlType) {
+            if (!text) {
                 return;
-            } else if (media.type !== urlType) return;
+            }
         }
+    } else {
+        if (!urlType) {
+            return;
+        } else if (media.type !== urlType) return;
     }
+
 
     let params = {
         userId: request.currentUser.id,
@@ -71,7 +65,7 @@ router.put('/:postId/likes', authorize, (request, response) => {
     console.log(userId)
     console.log(postId)
 
-    PostModel.like(userId, postId , () => {
+    PostModel.like(userId, postId, () => {
         response.status(200).json()
     })
 });
