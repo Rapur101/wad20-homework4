@@ -9,11 +9,11 @@ const jwt = require("../library/jwt");
 router.post('/', (request, response) => {
 
     let form = {
-        email: {required: true},
-        password: {required: true},
-        firstname: {required: true},
-        lastname: {required: false},
-        avatar: {required: false}
+        email: { required: true },
+        password: { required: true },
+        firstname: { required: true },
+        lastname: { required: false },
+        avatar: { required: false }
     };
 
     const fieldMissing = {
@@ -131,6 +131,7 @@ router.post('/:userId/follows', authorize, (request, response) => {
                     code: 'already_following',
                     message: 'You are already following this user'
                 });
+            return;
         } else {
             FollowModel.create(userId, followerId, () => {
                 response.json({
