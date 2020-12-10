@@ -1,6 +1,7 @@
-import {mount, createLocalVue} from '@vue/test-utils'
+import { mount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
+import moment from 'moment'
 import Posts from "../../src/components/Posts.vue";
 
 const localVue = createLocalVue();
@@ -25,8 +26,7 @@ const store = new Vuex.Store({
 });
 
 //Create dummy routes
-const routes = [
-    {
+const routes = [{
         path: '/',
         name: 'posts',
     },
@@ -36,10 +36,9 @@ const routes = [
     }
 ];
 
-const router = new VueRouter({routes});
+const router = new VueRouter({ routes });
 
-const testData = [
-    {
+const testData = [{
         id: 1,
         text: "I think it's going to rain",
         createTime: "2020-12-05 13:53:23",
@@ -98,9 +97,40 @@ jest.mock("axios", () => ({
 
 describe('Posts', () => {
 
-    const wrapper = mount(Posts, {router, store, localVue});
+    const wrapper = mount(Posts, { router, store, localVue });
 
-    it('1 == 1', function () {
+    it('1 == 1', function() {
         expect(true).toBe(true)
     });
+
+    it('correct number of posts rendered', function() {
+        let posts = wrapper.findAll("div.main-container div.post")
+        expect(posts).toHaveLength(testData.length);
+    });
+
+    it('correct media type rendered, if exists', function() {
+        let posts = wrapper.findAll("div.main-container div.post")
+
+        for (let i = 0; i < testData.length; i++) {
+            if (testData[i].media === null) {
+                expect(posts.at(i).find("div.post-image").exists()).toBe(false)
+            } else if (testData[i].media.type === "image") {
+                expect(posts.at(i).find("div.post-image img").exists()).toBe(true)
+            } else if (testData[i].media.type === "video") {
+                expect(posts.at(i).find("div.post-image video").exists()).toBe(true)
+            }
+        }
+    });
+
+
+    it('correct post create time rendered', function() {
+        let posts = wrapper.findAll("div.main-container div.post")
+
+        for (let i = 0; i < testData.length; i++) {
+            const correctTime = moment(testData[i].createTime).format('LLLL');
+            expect(posts.at(i).find("span.post-author-info + small").text()).toBe(correctTime);
+        }
+    });
+
+
 });
