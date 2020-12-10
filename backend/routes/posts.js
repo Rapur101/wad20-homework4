@@ -32,11 +32,12 @@ router.post('/', authorize, (request, response) => {
         return;
     }
 
-    let text = request.body.text;
-    let media = request.body.media;
+    //let text = request.body.text;
+    //let media = request.body.media;
 
-    let urlType = checkURL(media.url)
+    //let urlType = checkURL(media.url)
 
+    /*
     if (!media.type) {
         if (media.url) {
             return;
@@ -50,7 +51,7 @@ router.post('/', authorize, (request, response) => {
             return;
         } else if (media.type !== urlType) return;
     }
-
+    */
 
     let params = {
         userId: request.currentUser.id,
