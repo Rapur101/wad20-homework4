@@ -27,31 +27,36 @@ router.post('/', authorize, (request, response) => {
     // Endpoint to create a new post
 
     //If request is empty
-    if (!request.body || !request.body.text) {
-        response.status(403).json();
+    if (!request.body) {
+        response.status(400).json();
         return;
     }
 
-    //let text = request.body.text;
-    //let media = request.body.media;
-
+    let text = request.body.text;
+    let media = request.body.media;
     //let urlType = checkURL(media.url)
 
-    /*
+
     if (!media.type) {
         if (media.url) {
+            response.status(400).json();
             return;
         } else {
             if (!text) {
+                response.status(400).json();
                 return;
             }
         }
     } else {
-        if (!urlType) {
+        if (!media.url) {
+            response.status(400).json();
             return;
-        } else if (media.type !== urlType) return;
+        } /*else if (media.type !== urlType) {
+            response.status(400).json();
+            return;
+        }*/
     }
-    */
+
 
     let params = {
         userId: request.currentUser.id,
